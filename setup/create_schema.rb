@@ -32,17 +32,17 @@ session.execute("
 session.execute("
     CREATE TABLE friends (
         username text,
-        friend text,
+        friend_username text,
         since timestamp,
-        PRIMARY KEY (username, friend))
+        PRIMARY KEY (username, friend_username))
     ")
 
 session.execute("
     CREATE TABLE followers (
         username text,
-        follower text,
+        follower_username text,
         since timestamp,
-        PRIMARY KEY (username, follower))
+        PRIMARY KEY (username, follower_username))
     ")
 
 session.execute("
@@ -70,4 +70,5 @@ session.execute("
     ) WITH CLUSTERING ORDER BY (time DESC)
     ")
 
+cluster.close
 puts "Schema creation complete."
