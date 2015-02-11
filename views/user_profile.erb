@@ -1,0 +1,54 @@
+<!DOCTYPE HTML>
+<html>
+	<head>
+		<title><%= username %>'s Profile</title>
+	</head>
+
+	<body>
+
+	<h4><%= flash %></h4>
+
+		<form action="/newuser" method="post">
+			<fieldset>
+				<legend>Change Password</legend>
+				
+				<label for="curr_password">Current Password: </label></br />
+				<input type="password" name="curr_pass" /><br /><br />
+
+				<label for="new_password">New Password: </label></br />
+				<input type="password" name="curr_pass" /><br /><br />
+
+				<input type="submit" name="change_password" value="Change" />
+			</fieldset>
+		</form>
+
+		<h3><%= username %>'s friends:</h3>
+		<% friends.each do |friend| %>
+			<%= "#{friend}" %>
+			<form action="/removefriend" method="post">
+				<input type="hidden" name="username" value=<%= username %>>
+				<input type="hidden" name="friend_username" value=<%= friend %>>
+				<input type="submit" name="remove_friend" value="Remove" />
+			</form>
+		<% end %><br />
+
+		<form action="/addfriend" method="post">
+			<fieldset>
+				<legend>Add Friend</legend>
+				
+				<label for="friend_username">Username: </label></br />
+				<input type="text" name="friend_username" /><br /><br />
+
+				<input type="hidden" name="username" value=<%= username %>>
+
+				<input type="submit" name="add_friend" value="Add" />
+			</fieldset>
+		</form>
+
+		<h3><%= username %>'s followers:</h3>
+		<% followers.each do |follower| %>
+			<p><%= "#{follower}" %></p>
+		<% end %>
+
+	</body>
+</html>

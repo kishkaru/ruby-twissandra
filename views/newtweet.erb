@@ -1,0 +1,23 @@
+<!DOCTYPE HTML>
+<html>
+	<head>
+		<title>New Tweet For <%= session['username'] %></title>
+	</head>
+
+	<body>
+
+		<h4><%= flash %></h4>
+
+		<form action=<%= request.path_info %> method="post">
+			<fieldset>
+				<legend>New Tweet</legend>
+				
+				<label for="tweet">Tweet: </label></br />
+				<textarea name="tweet" /></textarea><br /><br />
+
+				<input type="submit" name="save_tweet" value="Tweet" />
+			</fieldset>
+		</form>
+
+	</body>
+</html>

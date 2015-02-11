@@ -1,0 +1,18 @@
+<!DOCTYPE HTML>
+<html>
+	<head>
+		<title><%= username %>'s Activity Feed</title>
+	</head>
+
+	<body>
+
+	<h4><%= flash %></h4>
+
+		<h3><%= username %>'s activity feed:</h3>
+		<% tweets.each do |tweet| %>
+			<p><%= "[#{tweet[0]['username']}] #{tweet[1]}" %><br />
+			<%= "#{tweet[0]['body']}" %></p>
+		<% end %><br />
+
+	</body>
+</html>

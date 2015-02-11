@@ -59,7 +59,7 @@ class Cass
     end
 
     tweets = results.map do |row|
-      get_tweet(row['tweet_id'])
+      [get_tweet(row['tweet_id']), row['time'].to_time]
     end
 
     [tweets, oldest_timeuuid]
@@ -68,13 +68,9 @@ class Cass
   # Given a username, gets the user's record
   def get_user_by_username(username)
     @select_user_query ||= @session.prepare("SELECT * FROM users WHERE username=?")
-    result = @session.execute(@select_user_query, arguments: [username]).first
+    @session.execute(@select_user_query, arguments: [username]).first
 
-    if result == nil
-      raise "User #{username} not found."
-    else
-      result
-    end
+    # can return nil here if user doesn't exist
   end
 
   # Given a list of usernames, gets an associated list of user records
@@ -211,6 +207,10 @@ class Cass
   def add_friend(from_username, to_username)
     if from_username == to_username
       raise "Can't friend yourself"
+    end
+
+    if get_user_by_username(to_username) == nil
+      raise "User #{to_username} does not exist."
     end
 
     @insert_friend_query ||= @session.prepare("INSERT INTO friends (username, friend_username, since) VALUES (?, ?, ?)")

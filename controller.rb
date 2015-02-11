@@ -8,6 +8,10 @@ class Controller
     @@db.save_user(username, password)
   end
 
+  def self.get_user(username)
+    @@db.get_user_by_username(username)
+  end
+
   # Friend actions
   def self.get_friends(username)
     @@db.get_friends(username)
@@ -22,7 +26,7 @@ class Controller
   end
 
   def self.remove_friend(username, friend_username)
-    @@db.remove(username, friend_username)
+    @@db.remove_friend(username, friend_username)
   end
 
   # Activity retrieval
