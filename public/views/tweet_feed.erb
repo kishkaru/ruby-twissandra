@@ -64,48 +64,52 @@
     <div class="container">
 
       <div class="starter-template">
-      <div class="well">
+        <div class="well">
 
-        <% if flash %>
-      	  <div class="alert alert-info" role="alert"><%= flash %></div>
-      	<% end %>
+          <% if flash %>
+            <div class="alert alert-info" role="alert"><%= flash %></div>
+          <% end %>
 
-		<h2>Public Tweets:</h2><br />
-		
-		<% tweets.each do |tweet| %>
-    <% if tweet[0]['username'] == session['username'] %>
-		  <div id="tweet-panel" class="panel panel-success">
-    <% else %>
-      <div id="tweet-panel" class="panel panel-info">
-    <% end %>
-  		  <div class="panel-heading">
-  		    <h3 class="panel-title ">
-  		      <div class="label label-primary"><%= "#{tweet[0]['username']}" %></div>
-  		      <div class="label"><%= "#{tweet[1].to_time}" %></div>
-  		      </h3>
-  		  </div>
-  		  <div class="panel-body">
-  		    <%= "#{tweet[0]['body']}" %>
-  		  </div>
-  		</div>
-		<% end %><br />
+          <h2>Public Tweets</h2><br />
+          
+          <% tweets.each do |tweet| %>
+            <% if tweet[0]['username'] == session['username'] %>
+              <div id="tweet-panel" class="panel panel-success">
+            <% else %>
+              <div id="tweet-panel" class="panel panel-info">
+            <% end %>
+              <div class="panel-heading">
+                <h3 class="panel-title ">
+                  <div class="label label-primary"><%= "#{tweet[0]['username']}" %></div>
+                  <div class="label"><%= "#{tweet[1].to_time}" %></div>
+                </h3>
+              </div>
+              <div class="panel-body">
+                <%= "#{tweet[0]['body']}" %>
+              </div>
+            </div>
+          <% end %><br />
 
-      	<nav>
-		  <ul class="pager">
-		    <% if paging_state[-2] != nil %>
-		      <li class="previous"><a href=<%= "/user/#{username}?paging_direction=previous" %>><i class="fa fa-arrow-left"></i> Newer</a></li>
-		  	<% else %>
-		  	  <li class="previous disabled"><a href="#"><i class="fa fa-arrow-left"></i> Newer</a></li>
-		  	<% end %>
-		    <% if paging_state[-1] != nil %>
-		      <li class="next"><a href=<%= "/user/#{username}?paging_direction=next" %>>Older <i class="fa fa-arrow-right"></i></a></li>
-		  	<% else %>
-		  	  <li class="next disabled"><a href="#">Older <i class="fa fa-arrow-right"></i></a></li>
-		  	<% end %>
-		  </ul>
-		</nav>
-		
-
+          <nav>
+            <ul class="pager">
+              <% if paging_state[-2] != nil %>
+                <li class="previous"><a href=<%= "/user/#{username}?paging_direction=previous" %>><i class="fa fa-arrow-left"></i> Newer</a></li>
+              <% else %>
+                <li class="previous disabled"><a href="#"><i class="fa fa-arrow-left"></i> Newer</a></li>
+              <% end %>
+              <% if paging_state[-1] != nil %>
+                <li class="next"><a href=<%= "/user/#{username}?paging_direction=next" %>>Older <i class="fa fa-arrow-right"></i></a></li>
+              <% else %>
+                <li class="next disabled"><a href="#">Older <i class="fa fa-arrow-right"></i></a></li>
+              <% end %>
+              <ul class="list-group">
+                <li class="list-group-item list-group-item-success">Your tweets</li>
+                <li class="list-group-item list-group-item-info">Friend and public tweets</li>
+              </ul>
+            </ul>
+          </nav>
+    
+        </div>
       </div>
 
     </div><!-- /.container -->
