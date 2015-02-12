@@ -123,6 +123,24 @@ post '/newtweet' do
   redirect to("/activityfeed")
 end
 
+post '/removetweet' do
+  username = params['username']
+  tweet_id = params['tweet_id']
+  time = params['time']
+  body = params['tweet-body']
+
+  if username != session['username']
+    flash[:notice] = "You can only remove your own tweets"
+    redirect back
+  end
+
+  Controller.remove_tweet(username, tweet_id, time)
+
+  flash[:notice] = "Tweet '#{body}' has been removed"
+
+  redirect back
+end
+
 # ACTIVITY ROUTES
 
 get '/user/:user' do
@@ -134,11 +152,11 @@ get '/user/:user' do
     tweets_and_paging = Controller.get_user_tweets(params['user'], session['paging_state'], "next")
   end
 
-  tweets_and_timestamps = tweets_and_paging[0]
+  tweets_ids_and_timestamps = tweets_and_paging[0]
   session['paging_state'] = tweets_and_paging[1]
   paging_state = session['paging_state']
 
-  erb :tweet_feed, :locals => { :username => params['user'], :tweets => tweets_and_timestamps, 
+  erb :tweet_feed, :locals => { :username => params['user'], :tweets => tweets_ids_and_timestamps, 
                                 :paging_state => paging_state, :flash => flash[:notice] }
 end
 
@@ -158,12 +176,12 @@ get '/activityfeed' do
     tweets_and_paging = Controller.get_activity_feed(session['username'], session['paging_state'], "next")
   end
 
-  tweets_and_timestamps = tweets_and_paging[0]
+  tweets_ids_and_timestamps = tweets_and_paging[0]
   session['paging_state'] = tweets_and_paging[1]
   paging_state = session['paging_state']
 
   erb :activity_feed, :locals => { :username => session['username'], :user => user,
-                                :tweets => tweets_and_timestamps, :paging_state => paging_state, 
+                                :tweets => tweets_ids_and_timestamps, :paging_state => paging_state, 
                                 :flash => flash[:notice] }
 end
 

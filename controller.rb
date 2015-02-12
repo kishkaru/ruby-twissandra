@@ -55,4 +55,11 @@ class Controller
     @@db.save_tweet(tweet_id, username, tweet)
   end
 
+  def self.remove_tweet(username, tweet_id, time)
+    tweet_id = Cassandra::Uuid.new(tweet_id)
+    time = Cassandra::TimeUuid.new(time)
+
+    @@db.remove_tweet(tweet_id, username, time)
+  end
+
 end

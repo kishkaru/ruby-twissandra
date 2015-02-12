@@ -19,6 +19,9 @@ class Cass
   @insert_friend_query = nil
   @insert_follower_query = nil
 
+  @delete_tweet_query = nil
+  @delete_usertweets_query = nil
+  @delete_timeline_query = nil
   @remove_friend_query = nil
   @remove_timeline_query = nil
   @remove_follower_query = nil
@@ -66,7 +69,7 @@ class Cass
     end
 
     tweets = results.map do |row|
-      [get_tweet(row['tweet_id']), row['time']]
+      [get_tweet(row['tweet_id']), row['tweet_id'], row['time']]
     end
 
     if direction == "new_query"
@@ -216,6 +219,28 @@ class Cass
       @session.execute(@insert_timeline_query, arguments: [follower_username, timeuuid, tweet_id])
     end
   end
+
+  def remove_tweet(tweet_id, username, timestamp)
+    @delete_tweet_query ||= @session.prepare("DELETE FROM tweets WHERE tweet_id=?")
+    @delete_usertweets_query ||= @session.prepare("DELETE FROM usertweets WHERE username=? AND time=?")
+    @delete_timeline_query ||= @session.prepare("DELETE FROM timeline WHERE username=? AND time=?")
+
+    # Remove the tweet
+    @session.execute(@delete_tweet_query, arguments: [tweet_id])
+    # Remove the tweet from the user's tweets
+    @session.execute(@delete_usertweets_query, arguments: [username, timestamp])
+    # Remove the tweet from PUBLIC's tweets
+    @session.execute(@delete_usertweets_query, arguments: [@public_user, timestamp])
+
+    # Remove the tweet from the user's timeline and the users' followers' timeline
+    follower_usernames = get_follower_usernames(username)
+    follower_usernames.push(username)
+
+    follower_usernames.each do |follower_username|
+      @session.execute(@delete_timeline_query, arguments: [follower_username, timestamp])
+    end
+  end
+
 
   def add_friend(from_username, to_username)
     @insert_friend_query ||= @session.prepare("INSERT INTO friends (username, friend_username, since) VALUES (?, ?, ?)")
