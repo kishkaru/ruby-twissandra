@@ -8,7 +8,7 @@
     <meta name="author" content="">
     <link rel="icon" href="../../favicon.ico">
 
-    <title>Login</title>
+    <title>New Tweet</title>
 
     <!-- Bootstrap core CSS -->
     <link href="/../css/flatly.min.css" rel="stylesheet">
@@ -42,15 +42,15 @@
           <ul class="nav navbar-nav navbar-right">
             <% if session['username'] == nil %>
 	            <li><form class="navbar-form" action="/login" method="get">
-	          	    <button class="btn btn-warning" type="submit" id="login-button">Login</button>
+	          	    <button class="btn btn-info" type="submit" id="login-button">Login</button>
 	          	</form></li>
               <li><form class="navbar-form" action="/signup" method="get">
                   <button class="btn btn-info" type="submit" id="login-button">Signup</button>
               </form></li>
 	        <% else %>
-              <li><form class="navbar-form" action="/newtweet" method="get">
-                  <button class="btn btn-danger" type="submit" id="login-button">New Tweet</button>
-              </form></li>
+	        	<li><form class="navbar-form" action="/newtweet" method="get">
+	          	    <button class="btn btn-danger" type="submit" id="login-button">New Tweet</button>
+	          	</form></li>
 	            <li><form class="navbar-form" action="/logout" method="get">
 	          	    <button class="btn btn-info" type="submit" id="login-button">Logout</button>
 	          	</form></li>
@@ -70,22 +70,14 @@
       	  <div class="alert alert-info" role="alert"><%= flash %></div>
       	<% end %>
 
-        <form class="form-signin" id="sign-in-form" action=<%= request.path_info %> method="post">
-          <h2 class="form-signin-heading">Please sign in</h2>
+        <form class="form-signin" id="new-tweet-form" action=<%= request.path_info %> method="post">
+          <h2 class="form-signin-heading">New Tweet</h2>
           
-          <label for="inputUsername" class="sr-only">Username</label>
-          <input type="text" name="inputUsername" class="form-control" placeholder="Username" required autofocus>
+          <label for="tweet" class="sr-only">Tweet</label>
+          <textarea name="tweet" class="form-control" required autofocus /></textarea><br />
           <br />
-          
-          <label for="inputPassword" class="sr-only">Password</label>
-          <input type="password" name="inputPassword" class="form-control" placeholder="Password" required>
-          
-          <div class="checkbox">
-            <label>
-              <input type="checkbox" value="remember-me"> Remember me
-            </label>
-          </div>
-          <button class="btn btn-lg btn-primary btn-block" type="submit">Sign in</button>
+
+          <button class="btn btn-lg btn-primary btn-block" type="submit">Tweet</button>
         </form>
 		
 

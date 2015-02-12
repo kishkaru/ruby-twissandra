@@ -18,16 +18,24 @@ end
 # AUTH ROUTES
 
 get '/login' do
+  if session['username'] != nil
+    flash[:notice] = "You're already signed in"
+    redirect to("/")
+  end
+  
   erb :login_page, :locals => { :flash => flash[:notice] }
 end
 
 post '/login' do
-  user = Controller.get_user(params['username'])
+  user = Controller.get_user(params['inputUsername'])
 
-  if user['username'] == params['username'] && user['password'] == params['password']
-    session['username'] = params['username']
-    flash[:notice] = "Logged in as #{params['username']}"
-    redirect to("/user/#{params['username']}/profile")
+  if user == nil
+    flash[:notice] = "Incorrect username or password"
+    redirect to("/login")
+  elsif user['username'] == params['inputUsername'] && user['password'] == params['inputPassword']
+    session['username'] = user['username']
+    flash[:notice] = "Logged in as #{user['username']}"
+    redirect back
   else
     flash[:notice] = "Incorrect username or password"
     redirect to("/login")
@@ -53,22 +61,21 @@ get '/user/:user/profile' do
 end
 
 get '/signup' do
-  erb :newuser
+  erb :signup_page, :locals => { :flash => flash[:notice] }
 end
 
 post '/signup' do
-  Controller.create_user(params['firstname'], params['lastname'], params['username'], params['password'])
-  session['username'] = params['username']
+  Controller.create_user(params['firstname'], params['lastname'], params['inputUsername'], params['inputPassword'])
+  session['username'] = params['inputUsername']
   flash[:notice] = "Thanks for signing up, #{params['firstname']}!"
   
-  redirect to("/user/#{params['username']}/profile")
+  redirect to("/user/#{params['inputUsername']}/profile")
 end
 
 # FRIEND ROUTES
 
 post '/addfriend' do
   username = session['username']
-  p username
   friend_username = params['friend_username']
   
   if friend_username == username
@@ -103,7 +110,7 @@ end
 # TWEET ROUTES
 
 get '/newtweet' do
-  erb :newtweet, :locals => { :flash => flash[:notice] }
+  erb :new_tweet, :locals => { :flash => flash[:notice] }
 end
 
 post '/newtweet' do
@@ -113,7 +120,7 @@ post '/newtweet' do
 
   flash[:notice] = "Posted a new tweet as #{username}!"
 
-  redirect back
+  redirect to("/activityfeed")
 end
 
 # ACTIVITY ROUTES
@@ -136,6 +143,13 @@ get '/user/:user' do
 end
 
 get '/activityfeed' do
+  if session['username'] == nil
+    flash[:notice] = "Login first to see your Activity Feed"
+    redirect to("/login")
+  end
+
+  user = Controller.get_user(session['username'])
+
   if params['paging_direction'] == nil
     tweets_and_paging = Controller.get_activity_feed(session['username'], session['paging_state'], "new_query")
   elsif params['paging_direction'] == "previous"
@@ -148,7 +162,8 @@ get '/activityfeed' do
   session['paging_state'] = tweets_and_paging[1]
   paging_state = session['paging_state']
 
-  erb :tweet_feed, :locals => { :username => session['username'], :tweets => tweets_and_timestamps, 
-                                :paging_state => paging_state, :flash => flash[:notice] }
+  erb :activity_feed, :locals => { :username => session['username'], :user => user,
+                                :tweets => tweets_and_timestamps, :paging_state => paging_state, 
+                                :flash => flash[:notice] }
 end
 

@@ -20,6 +20,7 @@ class Cass
   @insert_follower_query = nil
 
   @remove_friend_query = nil
+  @remove_timeline_query = nil
   @remove_follower_query = nil
 
   def initialize
@@ -218,6 +219,7 @@ class Cass
 
   def add_friend(from_username, to_username)
     @insert_friend_query ||= @session.prepare("INSERT INTO friends (username, friend_username, since) VALUES (?, ?, ?)")
+    @insert_timeline_query ||= @session.prepare("INSERT INTO timeline (username, time, tweet_id) VALUES (?, ?, ?)")
     @insert_follower_query ||= @session.prepare("INSERT INTO followers (username, follower_username, since) VALUES (?, ?, ?)")
 
     timestamp = Time.now
@@ -225,16 +227,33 @@ class Cass
     # Friend the user (follow him/her)
     @session.execute(@insert_friend_query, arguments: [from_username, to_username, timestamp])
 
+    # Grab all his/her past tweets into your timeline
+    @select_tweet_id_query ||= @session.prepare("SELECT time, tweet_id FROM usertweets WHERE username=?")
+    results = @session.execute(@select_tweet_id_query, arguments: [to_username])
+
+    results.each do |tweet|
+      @session.execute(@insert_timeline_query, arguments: [from_username, tweet['time'], tweet['tweet_id']])
+    end
+
     # Add yourself as a follower of that user
     @session.execute(@insert_follower_query, arguments: [to_username, from_username, timestamp])
   end
 
   def remove_friend(from_username, to_username)
     @remove_friend_query ||= @session.prepare("DELETE FROM friends WHERE username=? AND friend_username=?")
+    @remove_timeline_query ||= @session.prepare("DELETE FROM timeline WHERE username=? AND time=?")
     @remove_follower_query ||= @session.prepare("DELETE FROM followers WHERE username=? AND follower_username=?")
 
     # Unfriend the user (stop following him/her)
     @session.execute(@remove_friend_query, arguments: [from_username, to_username])
+
+    # Remove all his/her tweets from your timeline
+    @select_tweet_id_query ||= @session.prepare("SELECT time, tweet_id FROM usertweets WHERE username=?")
+    results = @session.execute(@select_tweet_id_query, arguments: [to_username])
+
+    results.each do |tweet|
+      @session.execute(@remove_timeline_query, arguments: [from_username, tweet['time']])
+    end
 
     # Remove yourself as a follower of that user
     @session.execute(@remove_follower_query, arguments: [to_username, from_username])

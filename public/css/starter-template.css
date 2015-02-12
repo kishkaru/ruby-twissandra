@@ -10,3 +10,8 @@ body {
 	margin-left: 200px;
 	margin-right: 200px;
 }
+
+#sign-in-form, #sign-up-form, #new-tweet-form{
+	margin-left: 400px;
+	margin-right: 400px;
+}
