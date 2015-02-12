@@ -33,7 +33,7 @@ class Controller
   def self.get_user_tweets(username, paging_state, direction)
     # Check edge case where returning to first page
     if direction == "previous" && paging_state[-3] == nil
-      return @@db.get_usertweets(username, paging_state, "new_query", 2)
+      return @@db.get_usertweets(username, paging_state, "new_query")
     end
 
     @@db.get_usertweets(username, paging_state, direction)
@@ -42,7 +42,7 @@ class Controller
   def self.get_activity_feed(username, paging_state, direction)
     # Check edge case where returning to first page
     if direction == "previous" && paging_state[-3] == nil
-      return @@db.get_timeline(username, paging_state, "new_query", 2)
+      return @@db.get_timeline(username, paging_state, "new_query")
     end
 
     @@db.get_timeline(username, paging_state, direction)
