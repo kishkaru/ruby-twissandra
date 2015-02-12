@@ -31,38 +31,50 @@ class Cass
 
   ## Retrieval APIs
 
-  def get_line(tablename, username, start, limit)
-    if start == nil
+  def get_line(tablename, username, paging_state, direction, limit)
+    if direction == "new_query"
       time_clause = ""
-      params = [username, limit]
-    else
+      params = [username]
+    elsif direction == "previous"
       time_clause = "AND time < ?"
-      params = [username, start, limit]
+      params = [username, paging_state[-3]]
+    elsif direction == "next"
+      time_clause = "AND time < ?"
+      params = [username, paging_state[-1]]
     end
 
     # This query changes based on whether new or paged. It must be re-prepared each time.
-    select_tweet_id_query = @session.prepare("SELECT time, tweet_id FROM #{tablename} WHERE username=? #{time_clause} LIMIT ?")
+    select_tweet_id_query = @session.prepare("SELECT time, tweet_id FROM #{tablename} WHERE username=? #{time_clause}")
 
-    results = @session.execute(select_tweet_id_query, arguments: params)
-    if results.empty?
-      return [], nil
-    end
+    results = @session.execute(select_tweet_id_query, arguments: params, page_size: limit)
 
+    # Check if there is any more pages. This is a C* bug where results.last_page? returns false on empty next page
     if results.size == limit
       timeuuids = results.map do |row|
         row['time']
       end
+    
+      next_start = timeuuids.min
 
-      oldest_timeuuid = timeuuids.min
-    else
-      oldest_timeuuid = nil
+      params = [username, next_start]
+      next_result = @session.execute("SELECT time, tweet_id FROM #{tablename} WHERE username=? AND time < ?", arguments: [username, next_start])
+
+      if next_result.empty?
+        next_start = nil
+      end
     end
 
     tweets = results.map do |row|
-      [get_tweet(row['tweet_id']), row['time'].to_time]
+      [get_tweet(row['tweet_id']), row['time']]
     end
 
-    [tweets, oldest_timeuuid]
+    if direction == "new_query"
+      [tweets, [nil, next_start]]
+    elsif direction == "previous"
+      [tweets, paging_state[0...-2].push(next_start)]
+    elsif direction == "next"
+      [tweets, paging_state.push(next_start)]
+    end
   end
 
   # Given a username, gets the user's record
@@ -130,13 +142,13 @@ class Cass
   end
 
   # Given a username, gets the user's friends' tweets
-  def get_timeline(username, start=nil, limit=40)
-    get_line("timeline", username, start, limit)
+  def get_timeline(username, paging_state, direction, limit=10)
+    get_line("timeline", username, paging_state, direction, limit)
   end
 
   # Given a username, gets the user's tweets
-  def get_usertweets(username, start=nil, limit=40)
-    get_line("usertweets", username, start, limit)
+  def get_usertweets(username, paging_state, direction, limit=10)
+    get_line("usertweets", username, paging_state, direction, limit)
   end
 
   # Given a tweet_id, gets the tweet's record

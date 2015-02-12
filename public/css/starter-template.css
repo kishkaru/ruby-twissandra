@@ -1,0 +1,12 @@
+body {
+  padding-top: 50px;
+}
+.starter-template {
+  padding: 40px 15px;
+  text-align: center;
+}
+
+#tweet-panel {
+	margin-left: 200px;
+	margin-right: 200px;
+}

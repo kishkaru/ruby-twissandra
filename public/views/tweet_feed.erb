@@ -1,0 +1,107 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="description" content="">
+    <meta name="author" content="">
+    <link rel="icon" href="../../favicon.ico">
+
+    <title>Public Activity Feed</title>
+
+    <!-- Bootstrap core CSS -->
+    <link href="/../css/flatly.min.css" rel="stylesheet">
+
+    <!-- Custom styles for this template -->
+    <link href="/../css/starter-template.css" rel="stylesheet">
+    <link rel="stylesheet" href="//maxcdn.bootstrapcdn.com/font-awesome/4.3.0/css/font-awesome.min.css">
+  </head>
+
+  <body>
+
+    <nav class="navbar navbar-default navbar-fixed-top">
+      <div class="container">
+        <div class="navbar-header">
+          <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#navbar" aria-expanded="false" aria-controls="navbar">
+            <span class="sr-only">Toggle navigation</span>
+            <span class="icon-bar"></span>
+            <span class="icon-bar"></span>
+            <span class="icon-bar"></span>
+          </button>
+          <a class="navbar-brand" href="/">Ruby-Twissandra</a>
+        </div>
+        <div id="navbar" class="collapse navbar-collapse">
+          <ul class="nav navbar-nav">
+            <li class="active"><a href="/">Public</a></li>
+          </ul>
+          <ul class="nav navbar-nav navbar-right">
+            <% if session['username'] == nil %>
+	            <li><form class="navbar-form" action="/login" method="get">
+	          	    <button class="btn btn-info" type="submit" id="login-button">Login</button>
+	          	</form></li>
+	        <% else %>
+	            <li><form class="navbar-form" action="/logout" method="get">
+	          	    <button class="btn btn-info" type="submit" id="login-button">Logout</button>
+	          	</form></li>
+	        <% end %>
+
+          </ul>
+        </div><!--/.nav-collapse -->
+      </div>
+    </nav>
+
+    <div class="container">
+
+      <div class="starter-template">
+      <div class="well">
+
+        <% if flash %>
+      	  <div class="alert alert-info" role="alert"><%= flash %></div>
+      	<% end %>
+
+		<h2>Public Tweets:</h2><br />
+		
+		<% tweets.each do |tweet| %>
+		<div id="tweet-panel" class="panel panel-info">
+		  <div class="panel-heading">
+		    <h3 class="panel-title ">
+		      <div class="label label-primary"><%= "#{tweet[0]['username']}" %></div>
+		      <div class="label"><%= "#{tweet[1].to_time}" %></div>
+		      </h3>
+		  </div>
+		  <div class="panel-body">
+		    <%= "#{tweet[0]['body']}" %>
+		  </div>
+		</div>
+		<% end %><br />
+
+      	<nav>
+		  <ul class="pager">
+		    <% if paging_state[-2] != nil %>
+		      <li class="previous"><a href=<%= "/user/#{username}?paging_direction=previous" %>><i class="fa fa-arrow-left"></i> Older</a></li>
+		  	<% else %>
+		  	  <li class="previous disabled"><a href="#"><i class="fa fa-arrow-left"></i> Older</a></li>
+		  	<% end %>
+		    <% if paging_state[-1] != nil %>
+		      <li class="next"><a href=<%= "/user/#{username}?paging_direction=next" %>>Newer <i class="fa fa-arrow-right"></i></a></li>
+		  	<% else %>
+		  	  <li class="next disabled"><a href="#">Newer <i class="fa fa-arrow-right"></i></a></li>
+		  	<% end %>
+		  </ul>
+		</nav>
+		
+
+      </div>
+
+    </div><!-- /.container -->
+
+    <!-- Bootstrap core JavaScript
+    ================================================== -->
+    <!-- Placed at the end of the document so the pages load faster -->
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.2/jquery.min.js"></script>
+    <script src="/../js/bootstrap.min.js"></script>
+    <!-- IE10 viewport hack for Surface/desktop Windows 8 bug -->
+    <script src="/../js/ie10-viewport-bug-workaround.js"></script>
+  </body>
+</html>

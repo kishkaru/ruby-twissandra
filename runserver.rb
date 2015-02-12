@@ -6,6 +6,7 @@ require_relative 'controller'
 
 enable :sessions
 set :session_secret, 'super secret'
+set :views, settings.root + '/public/views'
 use Rack::Flash, :sweep => true
 
 # INDEX (LOADS PUBLIC USER)
@@ -118,14 +119,36 @@ end
 # ACTIVITY ROUTES
 
 get '/user/:user' do
-  tweets_and_paging = Controller.get_user_tweets(params['user'])
+  if params['paging_direction'] == nil
+    tweets_and_paging = Controller.get_user_tweets(params['user'], session['paging_state'], "new_query")
+  elsif params['paging_direction'] == "previous"
+    tweets_and_paging = Controller.get_user_tweets(params['user'], session['paging_state'], "previous")
+  else params['paging_direction'] == "next"
+    tweets_and_paging = Controller.get_user_tweets(params['user'], session['paging_state'], "next")
+  end
+
   tweets_and_timestamps = tweets_and_paging[0]
-  erb :tweet_feed, :locals => { :username => params['user'], :tweets => tweets_and_timestamps, :flash => flash[:notice] }
+  session['paging_state'] = tweets_and_paging[1]
+  paging_state = session['paging_state']
+
+  erb :tweet_feed, :locals => { :username => params['user'], :tweets => tweets_and_timestamps, 
+                                :paging_state => paging_state, :flash => flash[:notice] }
 end
 
 get '/activityfeed' do
-  tweets_and_paging = Controller.get_activity_feed(session['username'])
+  if params['paging_direction'] == nil
+    tweets_and_paging = Controller.get_activity_feed(session['username'], session['paging_state'], "new_query")
+  elsif params['paging_direction'] == "previous"
+    tweets_and_paging = Controller.get_activity_feed(session['username'], session['paging_state'], "previous")
+  else params['paging_direction'] == "next"
+    tweets_and_paging = Controller.get_activity_feed(session['username'], session['paging_state'], "next")
+  end
+
   tweets_and_timestamps = tweets_and_paging[0]
-  erb :activity_feed, :locals => { :username => session['username'], :tweets => tweets_and_timestamps, :flash => flash[:notice] }
+  session['paging_state'] = tweets_and_paging[1]
+  paging_state = session['paging_state']
+
+  erb :tweet_feed, :locals => { :username => session['username'], :tweets => tweets_and_timestamps, 
+                                :paging_state => paging_state, :flash => flash[:notice] }
 end
 

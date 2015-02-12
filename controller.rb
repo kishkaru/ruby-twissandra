@@ -30,12 +30,22 @@ class Controller
   end
 
   # Activity retrieval
-  def self.get_user_tweets(username)
-    @@db.get_usertweets(username)
+  def self.get_user_tweets(username, paging_state, direction)
+    # Check edge case where returning to first page
+    if direction == "previous" && paging_state[-3] == nil
+      return @@db.get_usertweets(username, paging_state, "new_query", 2)
+    end
+
+    @@db.get_usertweets(username, paging_state, direction)
   end
 
-  def self.get_activity_feed(username)
-    @@db.get_timeline(username)
+  def self.get_activity_feed(username, paging_state, direction)
+    # Check edge case where returning to first page
+    if direction == "previous" && paging_state[-3] == nil
+      return @@db.get_timeline(username, paging_state, "new_query", 2)
+    end
+
+    @@db.get_timeline(username, paging_state, direction)
   end
 
   # Tweets
