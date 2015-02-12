@@ -4,8 +4,8 @@ class Controller
   @@db = Cass.new
 
   # User actions
-  def self.create_user(username, password)
-    @@db.save_user(username, password)
+  def self.create_user(firstname, lastname, username, password)
+    @@db.save_user(firstname, lastname, username, password)
   end
 
   def self.get_user(username)

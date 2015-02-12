@@ -56,8 +56,9 @@ get '/signup' do
 end
 
 post '/signup' do
-  Controller.create_user(params['username'], params['password'])
-  flash[:notice] = "Thanks for signing up, #{params['username']}!"
+  Controller.create_user(params['firstname'], params['lastname'], params['username'], params['password'])
+  session['username'] = params['username']
+  flash[:notice] = "Thanks for signing up, #{params['firstname']}!"
   
   redirect to("/user/#{params['username']}/profile")
 end
@@ -65,23 +66,37 @@ end
 # FRIEND ROUTES
 
 post '/addfriend' do
-  username = params['username']
+  username = session['username']
+  p username
   friend_username = params['friend_username']
+  
+  if friend_username == username
+    flash[:notice] = "Cannot add yourself as your friend"
+    redirect back
+  elsif Controller.get_user(friend_username) == nil
+    flash[:notice] = "#{friend_username} does not exist"
+    redirect back
+  end
+    
   Controller.add_friend(username, friend_username)
-
   flash[:notice] = "#{params['friend_username']} has been added as a friend!"
 
   redirect back
 end
 
 post '/removefriend' do
-  username = params['username']
+  username = session['username']
   friend_username = params['friend_username']
-  Controller.remove_friend(username, friend_username)
-
-  flash[:notice] = "#{params['friend_username']} has been removed as a friend!"
-
-  redirect back
+  
+  friends = Controller.get_friends(username)
+  if friends.include?(friend_username)
+    Controller.remove_friend(username, friend_username)
+    flash[:notice] = "#{friend_username} has been removed as a friend!"
+    redirect back
+  else
+    flash[:notice] = "#{friend_username} is not your friend"
+    redirect back
+  end
 end
 
 # TWEET ROUTES
@@ -100,7 +115,6 @@ post '/newtweet' do
   redirect back
 end
 
-
 # ACTIVITY ROUTES
 
 get '/user/:user' do
@@ -109,9 +123,9 @@ get '/user/:user' do
   erb :tweet_feed, :locals => { :username => params['user'], :tweets => tweets_and_timestamps, :flash => flash[:notice] }
 end
 
-get '/activityfeed/:user' do
-  tweets_and_paging = Controller.get_activity_feed(params['user'])
+get '/activityfeed' do
+  tweets_and_paging = Controller.get_activity_feed(session['username'])
   tweets_and_timestamps = tweets_and_paging[0]
-  erb :activityfeed, :locals => { :username => params['user'], :tweets => tweets_and_timestamps, :flash => flash[:notice] }
+  erb :activity_feed, :locals => { :username => session['username'], :tweets => tweets_and_timestamps, :flash => flash[:notice] }
 end
 

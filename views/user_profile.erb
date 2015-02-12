@@ -26,7 +26,6 @@
 		<% friends.each do |friend| %>
 			<%= "#{friend}" %>
 			<form action="/removefriend" method="post">
-				<input type="hidden" name="username" value=<%= username %>>
 				<input type="hidden" name="friend_username" value=<%= friend %>>
 				<input type="submit" name="remove_friend" value="Remove" />
 			</form>
@@ -38,8 +37,6 @@
 				
 				<label for="friend_username">Username: </label></br />
 				<input type="text" name="friend_username" /><br /><br />
-
-				<input type="hidden" name="username" value=<%= username %>>
 
 				<input type="submit" name="add_friend" value="Add" />
 			</fieldset>

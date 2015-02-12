@@ -26,7 +26,9 @@ session.execute("USE twissandra")
 session.execute("
     CREATE TABLE users (
         username text PRIMARY KEY,
-        password text)
+        password text,
+        firstname text,
+        lastname text)
     ")
 
 session.execute("

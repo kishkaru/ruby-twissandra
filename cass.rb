@@ -171,9 +171,9 @@ class Cass
 
   ## Insertion APIs
 
-  def save_user(username, password)
-    @insert_user_query ||= @session.prepare("INSERT INTO users (username, password) VALUES (?, ?)")
-    @session.execute(@insert_user_query, arguments: [username, password])
+  def save_user(firstname, lastname, username, password)
+    @insert_user_query ||= @session.prepare("INSERT INTO users (firstname, lastname, username, password) VALUES (?, ?, ?, ?)")
+    @session.execute(@insert_user_query, arguments: [firstname, lastname, username, password])
   end
 
   def save_tweet(tweet_id, username, tweet, timestamp=nil)
@@ -205,14 +205,6 @@ class Cass
   end
 
   def add_friend(from_username, to_username)
-    if from_username == to_username
-      raise "Can't friend yourself"
-    end
-
-    if get_user_by_username(to_username) == nil
-      raise "User #{to_username} does not exist."
-    end
-
     @insert_friend_query ||= @session.prepare("INSERT INTO friends (username, friend_username, since) VALUES (?, ?, ?)")
     @insert_follower_query ||= @session.prepare("INSERT INTO followers (username, follower_username, since) VALUES (?, ?, ?)")
 
@@ -226,10 +218,6 @@ class Cass
   end
 
   def remove_friend(from_username, to_username)
-    if from_username == to_username
-      raise "Can't unfriend yourself"
-    end
-
     @remove_friend_query ||= @session.prepare("DELETE FROM friends WHERE username=? AND friend_username=?")
     @remove_follower_query ||= @session.prepare("DELETE FROM followers WHERE username=? AND follower_username=?")
 
