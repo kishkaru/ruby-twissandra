@@ -77,66 +77,72 @@
 
           <div class="row">
 
-          <div class="col-md-3">
-		        <form class="form-horizontal" action="/changepassword" method="post">
-		          <h2 class="form-signin-heading">Change Password</h2>
-		                    
-						  <label class="col-sm-2 control-label">Username</label>
-						  <div class="col-sm-10">
-						    <p class="form-control-static"><%= user['username'] %></p>
-						  </div>
-
-						  <% if flash %>
-						  	<div class="has-error has-feedback">
-						  <% else %>
-						  	<div>
-						  <% end %>
-				          <label for="curr_password" class="sr-only">Password</label>
-				          <input type="password" name="curr_password" class="form-control" placeholder="Current Password" required>
-				          <br />
-			          </div>
-
-		          <label for="new_password" class="sr-only">Password</label>
-		          <input type="password" name="new_password" class="form-control" placeholder="New Password" required>
-		          <br />
-
-		          <button class="btn btn-info btn-block" type="submit">Change</button>
-		        </form>
-		       </div>
-
-	         <div class="col-md-3">
-						<h3><%= user['firstname'] %>'s friends:</h3>
-						<% friends.each do |friend| %>
-						<a class="btn btn-primary" href=<%= "/user/#{friend}" %>>
-							<%= "#{friend}" %>
-							<form action="/removefriend" method="post">
-								<input type="hidden" name="friend_username" value=<%= friend %>>
-								<button class="btn btn-xs btn-danger" type="submit">Remove</button>
+						<div class="col-md-3">
+							<form action="/deleteaccount" method="post">
+							<button class="btn btn-danger btn-block" type="submit">Delete Account</button>
 							</form>
-							</a><br /><br />
-						<% end %><br />
-					</div>
+						</div>
 
-					<div class="col-md-3">
-		        <form class="form-horizontal" action="/addfriend" method="post">
-		          <h2 class="form-signin-heading">Add Friend</h2>
-		                    
-		          <label for="friend_username" class="sr-only">Username</label>
-		          <input type="text" name="friend_username" class="form-control" placeholder="Username" required>
-		          <br />
+	          <div class="col-md-3">
+			        <form class="form-horizontal" action="/changepassword" method="post">
+			          <h2 class="form-signin-heading">Change Password</h2>
+			                    
+							  <label class="col-sm-2 control-label">Username</label>
+							  <div class="col-sm-10">
+							    <p class="form-control-static"><%= user['username'] %></p>
+							  </div>
 
-		          <button class="btn btn-success btn-block" type="submit">Add</button>
-		        </form>
-		      </div>
+							  <% if flash %>
+							  	<div class="has-error has-feedback">
+							  <% else %>
+							  	<div>
+							  <% end %>
+					          <label for="curr_password" class="sr-only">Password</label>
+					          <input type="password" name="curr_password" class="form-control" placeholder="Current Password" required>
+					          <br />
+				          </div>
+
+			          <label for="new_password" class="sr-only">Password</label>
+			          <input type="password" name="new_password" class="form-control" placeholder="New Password" required>
+			          <br />
+
+			          <button class="btn btn-info btn-block" type="submit">Change</button>
+			        </form>
+			       </div>
+
+		         <div class="col-md-3">
+							<h3><%= user['firstname'] %>'s friends:</h3>
+							<% friends.each do |friend| %>
+							<a class="btn btn-primary" href=<%= "/user/#{friend}" %>>
+								<%= "#{friend}" %>
+								<form action="/removefriend" method="post">
+									<input type="hidden" name="friend_username" value=<%= friend %>>
+									<button class="btn btn-xs btn-danger" type="submit">Remove</button>
+								</form>
+								</a><br /><br />
+							<% end %><br />
+						</div>
+
+						<div class="col-md-3">
+			        <form class="form-horizontal" action="/addfriend" method="post">
+			          <h2 class="form-signin-heading">Add Friend</h2>
+			                    
+			          <label for="friend_username" class="sr-only">Username</label>
+			          <input type="text" name="friend_username" class="form-control" placeholder="Username" required>
+			          <br />
+
+			          <button class="btn btn-success btn-block" type="submit">Add</button>
+			        </form>
+			      </div>
 
 
-          <div class="col-md-3">
-						<h3><%= user['firstname'] %>'s followers:</h3>
-						<% followers.each do |follower| %>
-							<a class="btn btn-primary" href=<%= "/user/#{follower}" %>><%= "#{follower}" %></a>
-						<% end %></div>
+	          <div class="col-md-3">
+							<h3><%= user['firstname'] %>'s followers:</h3>
+							<% followers.each do |follower| %>
+								<a class="btn btn-primary" href=<%= "/user/#{follower}" %>><%= "#{follower}" %></a>
+							<% end %></div>
 
-					</div>
+						</div>
 
 
 

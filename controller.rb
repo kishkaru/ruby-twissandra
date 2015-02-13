@@ -8,6 +8,10 @@ class Controller
     @@db.save_user(firstname, lastname, username, password)
   end
 
+  def self.remove_user(username)
+    @@db.remove_user(username)
+  end
+
   def self.get_user(username)
     @@db.get_user_by_username(username)
   end

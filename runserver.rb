@@ -94,6 +94,25 @@ post '/changepassword' do
   end
 end
 
+post '/deleteaccount' do
+  username = session['username']
+  if username == nil
+    flash[:notice] = "Login first to delete your account"
+    redirect to("/login")
+  end
+
+  user = Controller.get_user(username)
+  if user == nil
+    flash[:notice] = "User #{username} does not exist"
+  else
+    Controller.remove_user(username)
+    session['username'] = nil
+    flash[:notice] = "User #{username}'s account has been deleted"
+  end
+
+  redirect to("/")
+end
+
 # FRIEND ROUTES
 
 post '/addfriend' do
