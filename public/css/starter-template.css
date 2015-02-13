@@ -15,3 +15,8 @@ body {
 	margin-left: 400px;
 	margin-right: 400px;
 }
+
+#follower {
+	margin: 10px;
+	padding: 5px;
+}

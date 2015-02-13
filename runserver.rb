@@ -12,7 +12,23 @@ use Rack::Flash, :sweep => true
 # INDEX (LOADS PUBLIC USER)
 
 get '/' do
-  status, headers, body = call env.merge("PATH_INFO" => '/user/!PUBLIC!')
+  public_user = "!PUBLIC!"
+  #Controller.create_user("Public", "User", public_user, "super_secret")
+
+  if params['paging_direction'] == nil
+    tweets_and_paging = Controller.get_user_tweets(public_user, session['paging_state'], "new_query")
+  elsif params['paging_direction'] == "previous"
+    tweets_and_paging = Controller.get_user_tweets(public_user, session['paging_state'], "previous")
+  else params['paging_direction'] == "next"
+    tweets_and_paging = Controller.get_user_tweets(public_user, session['paging_state'], "next")
+  end
+
+  tweets_ids_and_timestamps = tweets_and_paging[0]
+  session['paging_state'] = tweets_and_paging[1]
+  paging_state = session['paging_state']
+
+  erb :public_feed, :locals => { :username => public_user, :tweets => tweets_ids_and_timestamps, 
+                                  :paging_state => paging_state, :flash => flash[:notice] }
 end
 
 # AUTH ROUTES
@@ -51,15 +67,6 @@ end
 
 # USER ROUTES
 
-get '/user/:user/profile' do
-  username = params['user']
-  friends = Controller.get_friends(username)
-  followers = Controller.get_followers(username)
-  
-  erb :user_profile, :locals => { :username => username, :friends => friends, 
-                                  :followers => followers, :flash => flash[:notice] }
-end
-
 get '/signup' do
   erb :signup_page, :locals => { :flash => flash[:notice] }
 end
@@ -69,7 +76,22 @@ post '/signup' do
   session['username'] = params['inputUsername']
   flash[:notice] = "Thanks for signing up, #{params['firstname']}!"
   
-  redirect to("/user/#{params['inputUsername']}/profile")
+  redirect to("/user/#{params['inputUsername']}")
+end
+
+post '/changepassword' do
+  username = session['username']
+  user = Controller.get_user(username)
+
+  if user['password'] == params['curr_password']
+    Controller.create_user(user['firstname'], user['lastname'], user['username'], params['curr_password'])
+  
+    flash[:notice] = "Password successfully changed for #{username}"
+    redirect back
+  else
+    flash[:notice] = "Incorrect current password"
+    redirect back
+  end
 end
 
 # FRIEND ROUTES
@@ -144,6 +166,20 @@ end
 # ACTIVITY ROUTES
 
 get '/user/:user' do
+  username = params['user']
+  user = Controller.get_user(params['user'])
+  if user == nil
+    flash[:notice] = "User #{username} does not exist"
+    redirect to("/")
+  end
+
+  p username
+  p session['username']
+  p username == session['username']
+
+  friends = Controller.get_friends(username)
+  followers = Controller.get_followers(username)
+
   if params['paging_direction'] == nil
     tweets_and_paging = Controller.get_user_tweets(params['user'], session['paging_state'], "new_query")
   elsif params['paging_direction'] == "previous"
@@ -156,8 +192,9 @@ get '/user/:user' do
   session['paging_state'] = tweets_and_paging[1]
   paging_state = session['paging_state']
 
-  erb :tweet_feed, :locals => { :username => params['user'], :tweets => tweets_ids_and_timestamps, 
-                                :paging_state => paging_state, :flash => flash[:notice] }
+  erb :user_profile, :locals => { :user => user, :friends => friends, :followers => followers,
+                                :tweets => tweets_ids_and_timestamps, :paging_state => paging_state, 
+                                :flash => flash[:notice] }
 end
 
 get '/activityfeed' do
