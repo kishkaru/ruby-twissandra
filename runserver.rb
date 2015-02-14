@@ -61,8 +61,8 @@ post '/login' do
 end
 
 get '/logout' do
+  flash[:notice] = "Successfully logged out of #{session['username']}"
   session['username'] = nil
-  flash[:notice] = "Successfully logged out"
 
   redirect to("/")
 end
