@@ -4,10 +4,12 @@ require 'erb'
 
 require_relative 'controller'
 
-enable :sessions
-set :session_secret, 'super secret'
-set :views, settings.root + '/public/views'
-use Rack::Flash, :sweep => true
+configure do
+  enable :sessions
+  set :session_secret, 'super secret'
+  set :views, settings.root + '/public/views'
+  use Rack::Flash, :sweep => true
+end
 
 # INDEX (LOADS PUBLIC USER)
 
