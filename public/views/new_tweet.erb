@@ -33,26 +33,26 @@
           </div>
           <div id="navbar" class="collapse navbar-collapse">
             <ul class="nav navbar-nav">
-              <li><a href="/">Public</a></li>
+              <li><a href="/"><i class="fa fa-home"></i> Public</a></li>
               <% if session['username'] %>
-                  <li><a href="/activityfeed">Activity Feed</a></li>
-                  <li class="active"><a href=<%= "/user/#{session['username']}" %>>My Profile</a></li>
+                  <li><a href="/activityfeed"><i class="fa fa-rss"></i> Activity Feed</a></li>
+                  <li class="active"><a href=<%= "/user/#{session['username']}" %>><i class="fa fa-user"></i> My Profile</a></li>
               <% end %>
             </ul>
             <ul class="nav navbar-nav navbar-right">
               <% if session['username'] == nil %>
                   <li><form class="navbar-form" action="/login" method="get">
-                    <button class="btn btn-warning" type="submit" id="login-button">Login</button>
+                    <button class="btn btn-warning" type="submit" id="login-button"><i class="fa fa-sign-in"></i> Login</button>
                   </form></li>
                   <li><form class="navbar-form" action="/signup" method="get">
-                    <button class="btn btn-info" type="submit" id="login-button">Signup</button>
+                    <button class="btn btn-info" type="submit" id="login-button"><i class="fa fa-share-square-o"></i> Signup</button>
                   </form></li>
               <% else %>
                   <li><form class="navbar-form" action="/newtweet" method="get">
-                    <button class="btn btn-danger" type="submit" id="login-button">New Tweet</button>
+                    <button class="btn btn-danger" type="submit" id="login-button"><i class="fa fa-pencil-square-o"></i> New Tweet</button>
                   </form></li>
                   <li><form class="navbar-form" action="/logout" method="get">
-                    <button class="btn btn-info" type="submit" id="login-button">Logout</button>
+                    <button class="btn btn-info" type="submit" id="login-button"><i class="fa fa-sign-out"></i> Logout</button>
                   </form></li>
               <% end %>
 

@@ -33,26 +33,26 @@
         </div>
         <div id="navbar" class="collapse navbar-collapse">
           <ul class="nav navbar-nav">
-            <li class="active"><a href="/">Public</a></li>
+            <li class="active"><a href="/"><i class="fa fa-home"></i> Public</a></li>
             <% if session['username'] %>
-            	<li><a href="/activityfeed">Activity Feed</a></li>
-            	<li><a href=<%= "/user/#{session['username']}" %>>My Profile</a></li>
+            	<li><a href="/activityfeed"><i class="fa fa-rss"></i> Activity Feed</a></li>
+            	<li><a href=<%= "/user/#{session['username']}" %>><i class="fa fa-user"></i> My Profile</a></li>
             <% end %>
           </ul>
           <ul class="nav navbar-nav navbar-right">
             <% if session['username'] == nil %>
 	            <li><form class="navbar-form" action="/login" method="get">
-	          	    <button class="btn btn-warning" type="submit" id="login-button">Login</button>
+	          	    <button class="btn btn-warning" type="submit" id="login-button"><i class="fa fa-sign-in"></i> Login</button>
 	          	</form></li>
               <li><form class="navbar-form" action="/signup" method="get">
-                  <button class="btn btn-info" type="submit" id="login-button">Signup</button>
+                  <button class="btn btn-info" type="submit" id="login-button"><i class="fa fa-share-square-o"></i> Signup</button>
               </form></li>
 	        <% else %>
               <li><form class="navbar-form" action="/newtweet" method="get">
-                  <button class="btn btn-danger" type="submit" id="login-button">New Tweet</button>
+                  <button class="btn btn-danger" type="submit" id="login-button"><i class="fa fa-pencil-square-o"></i> New Tweet</button>
               </form></li>
 	            <li><form class="navbar-form" action="/logout" method="get">
-	          	    <button class="btn btn-info" type="submit" id="login-button">Logout</button>
+	          	    <button class="btn btn-info" type="submit" id="login-button"><i class="fa fa-sign-out"></i> Logout</button>
 	          	</form></li>
 	        <% end %>
 
@@ -94,7 +94,7 @@
                     <input type="hidden" name="tweet_id" value=<%= tweet[1] %>>
                     <input type="hidden" name="time" value=<%= tweet[2] %>>
                     <input type="hidden" name="tweet-body" value=<%= tweet[0]['body'] %>>
-                    <button class="btn btn-xs btn-danger" type="submit" name="remove_tweet">Remove</button>
+                    <button class="btn btn-xs btn-danger" type="submit" name="remove_tweet"><i class="fa fa-times"></i> Remove</button>
                   </form>
                 </div>
               <% end %>
@@ -113,10 +113,13 @@
               <% else %>
                 <li class="next disabled"><a href="#">Older <i class="fa fa-arrow-right"></i></a></li>
               <% end %>
-              <ul class="list-group">
-                <li class="list-group-item list-group-item-success">Your tweets</li>
-                <li class="list-group-item list-group-item-info">Friend and public tweets</li>
-              </ul>
+              <div class="row">
+                <ul class="list-group">
+                  <div class="col-md-5" id="left-legend"><li class="list-group-item list-group-item-success">Your tweets</li></div>
+                  <div class="clearfix visible-xs-block"></div>
+                  <div class="col-md-4" id="right-legend"><li class="list-group-item list-group-item-info">Friend/public tweets</li></div>
+                </ul>
+              </div>
             </ul>
           </nav>
     
