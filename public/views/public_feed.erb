@@ -104,12 +104,12 @@
           <nav>
             <ul class="pager">
               <% if paging_state[-2] != nil %>
-                <li class="previous"><a href=<%= "/user/#{username}?paging_direction=previous" %>><i class="fa fa-arrow-left"></i> Newer</a></li>
+                <li class="previous"><a href=<%= "?paging_direction=previous" %>><i class="fa fa-arrow-left"></i> Newer</a></li>
               <% else %>
                 <li class="previous disabled"><a href="#"><i class="fa fa-arrow-left"></i> Newer</a></li>
               <% end %>
               <% if paging_state[-1] != nil %>
-                <li class="next"><a href=<%= "/user/#{username}?paging_direction=next" %>>Older <i class="fa fa-arrow-right"></i></a></li>
+                <li class="next"><a href=<%= "?paging_direction=next" %>>Older <i class="fa fa-arrow-right"></i></a></li>
               <% else %>
                 <li class="next disabled"><a href="#">Older <i class="fa fa-arrow-right"></i></a></li>
               <% end %>

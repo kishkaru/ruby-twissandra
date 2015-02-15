@@ -11,6 +11,11 @@ body {
 	margin-right: 200px;
 }
 
+#tweet-panel-profile {
+    margin-left: 25px;
+    margin-right: 25px;
+}
+
 #sign-in-form, #sign-up-form, #new-tweet-form{
 	margin-left: 400px;
 	margin-right: 400px;
@@ -19,4 +24,9 @@ body {
 #follower {
 	margin: 10px;
 	padding: 5px;
+}
+
+#profile-well {
+    margin: 0px;
+    padding: 0px;
 }

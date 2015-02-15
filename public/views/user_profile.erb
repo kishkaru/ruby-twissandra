@@ -67,138 +67,155 @@
     </nav>
 
     <div class="container">
-
       <div class="starter-template">
-        <div class="well">
+        <div class="row">
 
-          <% if flash %>
-            <div class="alert alert-info" role="alert"><%= flash %></div>
-          <% end %>
+          <div class="col-md-2">
+            <div class="panel panel-primary">
+              <div class="panel-heading">
+                <h3 class="panel-title">Friends</h3>
+              </div>
+              <div class="panel-body">
+                <h3><%= user['firstname'] %>'s friends:</h3>
+                <% friends.each do |friend| %>
+                    <a class="btn btn-block btn-primary" href=<%= "/user/#{friend}" %>>
+                      <%= "#{friend}" %>
+                      <form action="/removefriend" method="post">
+                        <input type="hidden" name="friend_username" value=<%= friend %>>
+                        <button class="btn btn-xs btn-danger" type="submit">Remove</button>
+                      </form>
+                    </a><br />
+                <% end %>
+              </div>
+              <div class="panel-footer">
+                <form class="form-horizontal" action="/addfriend" method="post">
+                  <h2 class="form-signin-heading">Add Friend</h2>
 
-          <div class="row">
+                  <label for="friend_username" class="sr-only">Username</label>
+                  <input type="text" name="friend_username" class="form-control" placeholder="Username" required>
+                  <br />
 
-						<div class="col-md-3">
-							<form action="/deleteaccount" method="post">
-							<button class="btn btn-danger btn-block" type="submit">Delete Account</button>
-							</form>
-						</div>
+                  <button class="btn btn-success btn-block" type="submit">Add</button>
+                </form>
 
-	          <div class="col-md-3">
-			        <form class="form-horizontal" action="/changepassword" method="post">
-			          <h2 class="form-signin-heading">Change Password</h2>
-			                    
-							  <label class="col-sm-2 control-label">Username</label>
-							  <div class="col-sm-10">
-							    <p class="form-control-static"><%= user['username'] %></p>
-							  </div>
+              </div>
+            </div>
 
-							  <% if flash %>
-							  	<div class="has-error has-feedback">
-							  <% else %>
-							  	<div>
-							  <% end %>
-					          <label for="curr_password" class="sr-only">Password</label>
-					          <input type="password" name="curr_password" class="form-control" placeholder="Current Password" required>
-					          <br />
-				          </div>
+            <div class="panel panel-primary">
+              <div class="panel-heading">
+                <h3 class="panel-title">Followers</h3>
+              </div>
+              <div class="panel-body">
+                <h3><%= user['firstname'] %>'s followers:</h3>
+                <% followers.each do |follower| %>
+                    <a class="btn btn-primary" href=<%= "/user/#{follower}" %>><%= "#{follower}" %></a><br /><br />
+                <% end %>
+              </div>
+            </div>
 
-			          <label for="new_password" class="sr-only">Password</label>
-			          <input type="password" name="new_password" class="form-control" placeholder="New Password" required>
-			          <br />
+          </div>
 
-			          <button class="btn btn-info btn-block" type="submit">Change</button>
-			        </form>
-			       </div>
+          <div class="well col-md-8">
 
-		         <div class="col-md-3">
-							<h3><%= user['firstname'] %>'s friends:</h3>
-							<% friends.each do |friend| %>
-							<a class="btn btn-primary" href=<%= "/user/#{friend}" %>>
-								<%= "#{friend}" %>
-								<form action="/removefriend" method="post">
-									<input type="hidden" name="friend_username" value=<%= friend %>>
-									<button class="btn btn-xs btn-danger" type="submit">Remove</button>
-								</form>
-								</a><br /><br />
-							<% end %><br />
-						</div>
-
-						<div class="col-md-3">
-			        <form class="form-horizontal" action="/addfriend" method="post">
-			          <h2 class="form-signin-heading">Add Friend</h2>
-			                    
-			          <label for="friend_username" class="sr-only">Username</label>
-			          <input type="text" name="friend_username" class="form-control" placeholder="Username" required>
-			          <br />
-
-			          <button class="btn btn-success btn-block" type="submit">Add</button>
-			        </form>
-			      </div>
-
-
-	          <div class="col-md-3">
-							<h3><%= user['firstname'] %>'s followers:</h3>
-							<% followers.each do |follower| %>
-								<a class="btn btn-primary" href=<%= "/user/#{follower}" %>><%= "#{follower}" %></a>
-							<% end %></div>
-
-						</div>
-
-
+            <% if flash %>
+              <div class="alert alert-info" role="alert"><%= flash %></div>
+            <% end %>
 
       		<h2><%= user['firstname'] %>'s Tweets</h2><br />
           
-          <% tweets.each do |tweet| %>
-            <% if tweet[0]['username'] == session['username'] %>
-              <div id="tweet-panel" class="panel panel-success">
-            <% else %>
-              <div id="tweet-panel" class="panel panel-info">
-            <% end %>
+              <% tweets.each do |tweet| %>
+                <% if tweet[0]['username'] == session['username'] %>
+                  <div id="tweet-panel-profile" class="panel panel-success">
+                <% else %>
+                  <div id="tweet-panel-profile" class="panel panel-info">
+                <% end %>
+                  <div class="panel-heading">
+                    <h3 class="panel-title ">
+                      <div class="label label-primary"><%= "#{tweet[0]['username']}" %></div>
+                      <div class="label"><%= "#{tweet[2].to_time}" %></div>
+                    </h3>
+                  </div>
+                  <div class="panel-body">
+                    <%= "#{tweet[0]['body']}" %>
+                  </div>
+                  <% if tweet[0]['username'] == session['username'] %>
+                    <div class="panel-footer">
+                      <form action="/removetweet" method="post">
+                        <input type="hidden" name="username" value=<%= tweet[0]['username'] %>>
+                        <input type="hidden" name="tweet_id" value=<%= tweet[1] %>>
+                        <input type="hidden" name="time" value=<%= tweet[2] %>>
+                        <input type="hidden" name="tweet-body" value=<%= tweet[0]['body'] %>>
+                        <button class="btn btn-xs btn-danger" type="submit" name="remove_tweet">Remove</button>
+                      </form>
+                    </div>
+                  <% end %>
+                </div>
+              <% end %><br />
+
+              <nav>
+                <ul class="pager">
+                  <% if paging_state[-2] != nil %>
+                    <li class="previous"><a href=<%= "/user/#{user['username']}?paging_direction=previous" %>><i class="fa fa-arrow-left"></i> Newer</a></li>
+                  <% else %>
+                    <li class="previous disabled"><a href="#"><i class="fa fa-arrow-left"></i> Newer</a></li>
+                  <% end %>
+                  <% if paging_state[-1] != nil %>
+                    <li class="next"><a href=<%= "/user/#{user['username']}?paging_direction=next" %>>Older <i class="fa fa-arrow-right"></i></a></li>
+                  <% else %>
+                    <li class="next disabled"><a href="#">Older <i class="fa fa-arrow-right"></i></a></li>
+                  <% end %>
+                  <ul class="list-group">
+                    <li class="list-group-item list-group-item-success">Your tweets</li>
+                    <li class="list-group-item list-group-item-info">Friend and public tweets</li>
+                  </ul>
+                </ul>
+              </nav>
+
+          </div> <!-- well -->
+
+          <div class="col-md-2">
+
+            <div class="panel panel-primary">
               <div class="panel-heading">
-                <h3 class="panel-title ">
-                  <div class="label label-primary"><%= "#{tweet[0]['username']}" %></div>
-                  <div class="label"><%= "#{tweet[2].to_time}" %></div>
-                </h3>
+                <h3 class="panel-title">Account settings</h3>
               </div>
               <div class="panel-body">
-                <%= "#{tweet[0]['body']}" %>
+
+                <form class="form-horizontal" action="/changepassword" method="post">
+                  <h2 class="form-signin-heading">Change Password</h2>
+
+                  <label class="col-sm-2 control-label">Username</label>
+                  <div class="col-sm-10">
+                    <p class="form-control-static"><%= user['username'] %></p>
+                  </div>
+
+                  <% if flash && flash.start_with?("Incorrect") %>
+                      <div class="has-error has-feedback">
+                  <% else %>
+                      <div>
+                  <% end %>
+                  <label for="curr_password" class="sr-only">Password</label>
+                  <input type="password" name="curr_password" class="form-control" placeholder="Current Password" required>
+                  <br />
+                  </div>
+
+                  <label for="new_password" class="sr-only">Password</label>
+                  <input type="password" name="new_password" class="form-control" placeholder="New Password" required>
+                  <br />
+
+                  <button class="btn btn-info btn-block" type="submit">Change</button>
+                </form><br />
               </div>
-              <% if tweet[0]['username'] == session['username'] %>
-                <div class="panel-footer">
-                  <form action="/removetweet" method="post">
-                    <input type="hidden" name="username" value=<%= tweet[0]['username'] %>>
-                    <input type="hidden" name="tweet_id" value=<%= tweet[1] %>>
-                    <input type="hidden" name="time" value=<%= tweet[2] %>>
-                    <input type="hidden" name="tweet-body" value=<%= tweet[0]['body'] %>>
-                    <button class="btn btn-xs btn-danger" type="submit" name="remove_tweet">Remove</button>
-                  </form>
-                </div>
-              <% end %>
-            </div>
-          <% end %><br />
+              <div class="panel-footer">
+                <form action="/deleteaccount" method="post">
+                  <button class="btn btn-danger btn-block" type="submit">Delete Account</button>
+                </form>
+              </div>
+             </div>
+          </div>
 
-          <nav>
-            <ul class="pager">
-              <% if paging_state[-2] != nil %>
-                <li class="previous"><a href=<%= "/user/#{username}?paging_direction=previous" %>><i class="fa fa-arrow-left"></i> Newer</a></li>
-              <% else %>
-                <li class="previous disabled"><a href="#"><i class="fa fa-arrow-left"></i> Newer</a></li>
-              <% end %>
-              <% if paging_state[-1] != nil %>
-                <li class="next"><a href=<%= "/user/#{username}?paging_direction=next" %>>Older <i class="fa fa-arrow-right"></i></a></li>
-              <% else %>
-                <li class="next disabled"><a href="#">Older <i class="fa fa-arrow-right"></i></a></li>
-              <% end %>
-              <ul class="list-group">
-                <li class="list-group-item list-group-item-success">Your tweets</li>
-                <li class="list-group-item list-group-item-info">Friend and public tweets</li>
-              </ul>
-            </ul>
-          </nav>
-    
-        </div>
-      </div>
-
+        </div> <!-- row -->
+      </div> <!-- starter-template -->
     </div><!-- /.container -->
 
     <!-- Bootstrap core JavaScript

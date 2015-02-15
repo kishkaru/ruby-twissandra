@@ -130,7 +130,7 @@ post '/addfriend' do
   end
     
   Controller.add_friend(username, friend_username)
-  flash[:notice] = "#{params['friend_username']} has been added as a friend!"
+  flash[:notice] = "#{params['friend_username']} has been added as a friend"
 
   redirect back
 end
@@ -142,7 +142,7 @@ post '/removefriend' do
   friends = Controller.get_friends(username)
   if friends.include?(friend_username)
     Controller.remove_friend(username, friend_username)
-    flash[:notice] = "#{friend_username} has been removed as a friend!"
+    flash[:notice] = "#{friend_username} has been removed as a friend"
     redirect back
   else
     flash[:notice] = "#{friend_username} is not your friend"
@@ -194,7 +194,6 @@ get '/user/:user' do
     redirect to("/")
   end
 
-  p username
   p session['username']
   p username == session['username']
 
@@ -238,8 +237,7 @@ get '/activityfeed' do
   session['paging_state'] = tweets_and_paging[1]
   paging_state = session['paging_state']
 
-  erb :activity_feed, :locals => { :username => session['username'], :user => user,
-                                :tweets => tweets_ids_and_timestamps, :paging_state => paging_state, 
+  erb :activity_feed, :locals => { :user => user, :tweets => tweets_ids_and_timestamps, :paging_state => paging_state,
                                 :flash => flash[:notice] }
 end
 
