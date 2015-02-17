@@ -80,25 +80,28 @@
                 <% friends.each do |friend| %>
                     <a class="btn btn-block btn-primary" href=<%= "/user/#{friend}" %>>
                       <%= "#{friend}" %>
+                      <% if session['username'] == user['username'] %>
                       <form action="/removefriend" method="post">
                         <input type="hidden" name="friend_username" value=<%= friend %>>
                         <button class="btn btn-xs btn-danger" type="submit"><i class="fa fa-user-times"></i> Remove</button>
                       </form>
+                      <% end %>
                     </a><br />
                 <% end %>
               </div>
-              <div class="panel-footer">
-                <form class="form-horizontal" action="/addfriend" method="post">
-                  <h2 class="form-signin-heading">Add Friend</h2>
+              <% if session['username'] == user['username'] %>
+                <div class="panel-footer">
+                  <form class="form-horizontal" action="/addfriend" method="post">
+                    <h2 class="form-signin-heading">Add Friend</h2>
 
-                  <label for="friend_username" class="sr-only">Username</label>
-                  <input type="text" name="friend_username" class="form-control" placeholder="Username" required>
-                  <br />
+                    <label for="friend_username" class="sr-only">Username</label>
+                    <input type="text" name="friend_username" class="form-control" placeholder="Username" required>
+                    <br />
 
-                  <button class="btn btn-success btn-block" type="submit"><i class="fa fa-user-plus"></i> Add</button>
-                </form>
-
-              </div>
+                    <button class="btn btn-success btn-block" type="submit"><i class="fa fa-user-plus"></i> Add</button>
+                  </form>
+                </div>
+              <% end %>
             </div>
 
             <div class="panel panel-primary">
@@ -178,43 +181,45 @@
 
           <div class="col-md-2">
 
-            <div class="panel panel-primary">
-              <div class="panel-heading">
-                <h3 class="panel-title">Account settings</h3>
-              </div>
-              <div class="panel-body">
+            <% if session['username'] == user['username'] %>
+              <div class="panel panel-primary">
+                <div class="panel-heading">
+                  <h3 class="panel-title">Account settings</h3>
+                </div>
+                <div class="panel-body">
 
-                <form class="form-horizontal" action="/changepassword" method="post">
-                  <h2 class="form-signin-heading">Change Password</h2>
+                  <form class="form-horizontal" action="/changepassword" method="post">
+                    <h2 class="form-signin-heading">Change Password</h2>
 
-                  <label class="col-sm-2 control-label">Username</label>
-                  <div class="col-sm-10">
-                    <p class="form-control-static"><%= user['username'] %></p>
-                  </div>
+                    <label class="col-sm-2 control-label">Username</label>
+                    <div class="col-sm-10">
+                      <p class="form-control-static"><%= user['username'] %></p>
+                    </div>
 
-                  <% if flash && flash.start_with?("Incorrect") %>
+                    <% if flash && flash.start_with?("Incorrect") %>
                       <div class="has-error has-feedback">
-                  <% else %>
+                    <% else %>
                       <div>
-                  <% end %>
-                  <label for="curr_password" class="sr-only">Password</label>
-                  <input type="password" name="curr_password" class="form-control" placeholder="Current Password" required>
-                  <br />
-                  </div>
+                    <% end %>
+                        <label for="curr_password" class="sr-only">Password</label>
+                        <input type="password" name="curr_password" class="form-control" placeholder="Current Password" required>
+                        <br />
+                      </div>
 
-                  <label for="new_password" class="sr-only">Password</label>
-                  <input type="password" name="new_password" class="form-control" placeholder="New Password" required>
-                  <br />
+                    <label for="new_password" class="sr-only">Password</label>
+                    <input type="password" name="new_password" class="form-control" placeholder="New Password" required>
+                    <br />
 
-                  <button class="btn btn-info btn-block" type="submit"><i class="fa fa-refresh"></i> Change</button>
-                </form><br />
-              </div>
-              <div class="panel-footer">
-                <form action="/deleteaccount" method="post">
-                  <button class="btn btn-danger btn-block" type="submit">Delete Account</button>
-                </form>
-              </div>
-             </div>
+                    <button class="btn btn-info btn-block" type="submit"><i class="fa fa-refresh"></i> Change</button>
+                  </form><br />
+                </div>
+                <div class="panel-footer">
+                  <form action="/deleteaccount" method="post">
+                    <button class="btn btn-danger btn-block" type="submit">Delete Account</button>
+                  </form>
+                </div>
+               </div>
+             <% end %>
           </div>
 
         </div> <!-- row -->
