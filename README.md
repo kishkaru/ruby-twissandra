@@ -16,6 +16,9 @@ ruby runserver.rb
 
 ## Running hosted server (via Unicorn)
 ```
+# Update app_dir in unicorn.rb
+# mkdir for /pids and /logs
+
 unicorn -c unicorn.rb -D
 ```
 
@@ -49,3 +52,8 @@ server {
     location = /favicon.ico { alias /home/ruby-twissandra/favicon.ico; }
 }
 ```
+
+## Feature wishlist
+* Profile picture for users & tweets
+* Ability to add comments to tweets 
+* Jquery to streamline UI
