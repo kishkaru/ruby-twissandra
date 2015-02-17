@@ -9,14 +9,12 @@ bundle install
 ruby setup/create_schema.rb
 ```
 
-## Running server locally
-### Run Sinatra server (via Thin)
+## Running server locally (via Thin)
 ```
 ruby runserver.rb
 ```
 
-## Deploying server via Unicorn & Nginx
-### Run Sinatra server (via Unicorn)
+## Running hosted server (via Unicorn)
 ```
 unicorn -c unicorn.rb -D
 ```
